@@ -35,16 +35,17 @@ class CustomizationUsingTableViewDelegate : UIViewController {
     @IBOutlet private var tableView: UITableView!
 
     let disposeBag = DisposeBag()
-
+    //Animated
     var dataSource: RxTableViewSectionedAnimatedDataSource<MySection>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        //注册cell
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-
+        //类型：MySection
         let dataSource = RxTableViewSectionedAnimatedDataSource<MySection>(
             configureCell: { ds, tv, _, item in
+                //复用cell
                 let cell = tv.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .default, reuseIdentifier: "Cell")
                 cell.textLabel?.text = "Item \(item)"
 

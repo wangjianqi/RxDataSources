@@ -39,12 +39,14 @@ class PartialUpdatesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        //初始值
         let initialRandomizedSections = Randomizer(rng: PseudoRandomGenerator(4, 3), sections: initialValue())
-
+        //interval:每隔一段时间发出一个索引数
         let ticks = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance).map { _ in () }
         let randomSections = Observable.of(ticks, refreshButton.rx.tap.asObservable())
+            //合并成一个
                 .merge()
+            //
                 .scan(initialRandomizedSections) { a, _ in
                     return a.randomize()
                 }
@@ -54,29 +56,32 @@ class PartialUpdatesViewController: UIViewController {
             .share(replay: 1)
 
         let (configureCell, titleForSection) = PartialUpdatesViewController.tableViewDataSourceUI()
+        //配置
         let tvAnimatedDataSource = RxTableViewSectionedAnimatedDataSource<NumberSection>(
             configureCell: configureCell,
             titleForHeaderInSection: titleForSection
         )
+        //配置
         let reloadDataSource = RxTableViewSectionedReloadDataSource<NumberSection>(
             configureCell: configureCell,
             titleForHeaderInSection: titleForSection
         )
-
+        //绑定
         randomSections
             .bind(to: animatedTableView.rx.items(dataSource: tvAnimatedDataSource))
             .disposed(by: disposeBag)
-
+        //绑定
         randomSections
             .bind(to: tableView.rx.items(dataSource: reloadDataSource))
             .disposed(by: disposeBag)
 
         let (configureCollectionViewCell, configureSupplementaryView) =  PartialUpdatesViewController.collectionViewDataSourceUI()
+        //配置CollectionView
         let cvAnimatedDataSource = RxCollectionViewSectionedAnimatedDataSource(
             configureCell: configureCollectionViewCell,
             configureSupplementaryView: configureSupplementaryView
         )
-
+        //绑定
         randomSections
             .bind(to: animatedCollectionView.rx.items(dataSource: cvAnimatedDataSource))
             .disposed(by: disposeBag)
@@ -98,7 +103,7 @@ class PartialUpdatesViewController: UIViewController {
 
 // MARK: Skinning
 extension PartialUpdatesViewController {
-
+    //配置tableView
     static func tableViewDataSourceUI() -> (
         TableViewSectionedDataSource<NumberSection>.ConfigureCell,
         TableViewSectionedDataSource<NumberSection>.TitleForHeaderInSection
@@ -135,7 +140,7 @@ extension PartialUpdatesViewController {
     }
 
     // MARK: Initial value
-
+    //初始值
     func initialValue() -> [NumberSection] {
         #if true
             let nSections = 10
@@ -170,7 +175,7 @@ let _initialValue: [NumberSection] = [
     NumberSection(header: "section 9", numbers: `$`([25, 26, 27]), updated: Date()),
     NumberSection(header: "section 10", numbers: `$`([28, 29, 30]), updated: Date())
 ]
-
+//函数
 func `$`(_ numbers: [Int]) -> [IntItem] {
     return numbers.map { IntItem(number: $0, date: Date()) }
 }

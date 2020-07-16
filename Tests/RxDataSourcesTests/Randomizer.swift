@@ -19,7 +19,7 @@ struct PseudoRandomGenerator {
         self.m_w = m_w
         self.m_z = m_z
     }
-
+    //随机
     func get_random() -> (PseudoRandomGenerator, Int) {
         let m_z = 36969 &* (self.m_z & 65535) &+ (self.m_z >> 16)
         let m_w = 18000 &* (self.m_w & 65535) &+ (self.m_w >> 16)
@@ -61,7 +61,7 @@ struct Randomizer {
             return p + s.numbers.count
         }
     }
-
+    //随机
     func randomize() -> Randomizer {
 
         var nextUnusedSections = [String]()
